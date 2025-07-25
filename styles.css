@@ -318,3 +318,10 @@ textarea:focus {
     outline: none;
     box-shadow: 0 0 0 2px rgba(63, 81, 181, 0.2);
 }
+
+#dailyNotesPanel {
+    min-height: 250px;
+}
+#noteSavedMsg {
+    transition: opacity 0.3s;
+}

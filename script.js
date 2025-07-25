@@ -727,3 +727,102 @@ function getTimeIndicator(dueDateTime) {
     
     return `<span class="time-indicator ${timeClass}">${timeText}</span>`;
 }
+
+// Günlük Notlar özelliği
+const dailyNotesBtn = document.getElementById('dailyNotesBtn');
+const dailyNotesPanel = document.getElementById('dailyNotesPanel');
+const noteDate = document.getElementById('noteDate');
+const dailyNoteText = document.getElementById('dailyNoteText');
+const addNoteBtn = document.getElementById('addNoteBtn');
+const notesList = document.getElementById('notesList');
+const saveDailyNote = document.getElementById('saveDailyNote');
+const noteSavedMsg = document.getElementById('noteSavedMsg');
+
+// Paneli aç/kapat
+if (dailyNotesBtn) {
+    dailyNotesBtn.addEventListener('click', () => {
+        // Diğer panelleri gizle
+        document.querySelectorAll('main > section').forEach(sec => sec.classList.add('hidden'));
+        dailyNotesPanel.classList.remove('hidden');
+        // Tarih alanı bugünün tarihi olsun
+        noteDate.value = new Date().toISOString().slice(0, 10);
+        loadDailyNote();
+    });
+}
+
+function getNotesForDate(date) {
+    const notes = JSON.parse(localStorage.getItem('dailyNotesV2') || '{}');
+    return notes[date] || [];
+}
+
+function saveNotesForDate(date, notesArr) {
+    const notes = JSON.parse(localStorage.getItem('dailyNotesV2') || '{}');
+    notes[date] = notesArr;
+    localStorage.setItem('dailyNotesV2', JSON.stringify(notes));
+}
+
+function renderNotes() {
+    const date = noteDate.value;
+    const notesArr = getNotesForDate(date);
+    notesList.innerHTML = '';
+    notesArr.forEach((note, idx) => {
+        const li = document.createElement('li');
+        li.className = 'flex items-center justify-between bg-gray-100 rounded px-2 py-1';
+        li.innerHTML = `<span class="break-all">${note}</span>
+            <button class="text-red-500 hover:text-red-700 ml-2" title="Delete note" data-idx="${idx}">
+                <i class="fas fa-minus"></i>
+            </button>`;
+        notesList.appendChild(li);
+    });
+}
+
+if (noteDate) {
+    noteDate.value = new Date().toISOString().slice(0, 10);
+    noteDate.addEventListener('change', renderNotes);
+    renderNotes();
+}
+
+if (addNoteBtn) {
+    addNoteBtn.addEventListener('click', () => {
+        const date = noteDate.value;
+        const text = dailyNoteText.value.trim();
+        if (!text) return;
+        const notesArr = getNotesForDate(date);
+        notesArr.push(text);
+        saveNotesForDate(date, notesArr);
+        dailyNoteText.value = '';
+        renderNotes();
+    });
+}
+
+if (notesList) {
+    notesList.addEventListener('click', (e) => {
+        if (e.target.closest('button')) {
+            const idx = e.target.closest('button').dataset.idx;
+            const date = noteDate.value;
+            let notesArr = getNotesForDate(date);
+            notesArr.splice(idx, 1);
+            saveNotesForDate(date, notesArr);
+            renderNotes();
+        }
+    });
+}
+
+// Günlük notları yükle
+function loadDailyNote() {
+    const notes = JSON.parse(localStorage.getItem('dailyNotes') || '{}');
+    const date = noteDate.value;
+    dailyNoteText.value = notes[date] || '';
+    noteSavedMsg.classList.add('hidden');
+}
+
+if (saveDailyNote) {
+    saveDailyNote.addEventListener('click', () => {
+        const notes = JSON.parse(localStorage.getItem('dailyNotes') || '{}');
+        const date = noteDate.value;
+        notes[date] = dailyNoteText.value;
+        localStorage.setItem('dailyNotes', JSON.stringify(notes));
+        noteSavedMsg.classList.remove('hidden');
+        setTimeout(() => noteSavedMsg.classList.add('hidden'), 1500);
+    });
+}

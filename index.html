@@ -64,8 +64,22 @@
                 </button>
             </div>
         </header>
-
+        <div class="flex gap-2 mb-4">
+            <!-- Günlük Notlar kart olarak ana sayfaya taşındı -->
+        </div>
         <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <section class="bg-white p-4 rounded shadow order-first">
+                <h2 class="text-xl font-semibold mb-4">🗒️ Daily Notes</h2>
+                <div class="mb-2 flex items-center gap-2">
+                    <input type="date" id="noteDate" class="border rounded px-2 py-1" />
+                    <button id="addNoteBtn" class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600" title="Add note">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+                <textarea id="dailyNoteText" rows="2" class="w-full border rounded p-2 mb-2" placeholder="Write your note..."></textarea>
+                <ul id="notesList" class="mb-2 space-y-2"></ul>
+            </section>
+
             <section class="bg-white p-4 rounded shadow">
                 <h2 class="text-xl font-semibold mb-4">📝 Tasks</h2>
                 <div class="mb-4">
